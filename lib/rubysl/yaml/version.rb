@@ -1,5 +1,5 @@
 module RubySL
-  module Yaml
+  module YAML
     VERSION = "0.0.1"
   end
 end
