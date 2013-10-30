@@ -3,47 +3,57 @@
 
 begin
   require 'psych'
-rescue LoadError
-  warn "#{caller[0]}:"
-  warn "It seems your ruby installation is missing psych (for YAML output)."
-  warn "To eliminate this warning, please install libyaml and reinstall your ruby."
-  raise
-end
 
-YAML = Psych # :nodoc:
+  module Psych
+    # For compatibility, deprecated
+    class EngineManager # :nodoc:
+      attr_reader :yamler # :nodoc:
 
-module Psych # :nodoc:
-  # For compatibility, deprecated
-  class EngineManager # :nodoc:
-    attr_reader :yamler # :nodoc:
-
-    def initialize # :nodoc:
-      @yamler = 'psych'
-    end
-
-    def syck? # :nodoc:
-      false
-    end
-
-    # Psych is always used and this method has no effect.
-    #
-    # This method is still present for compatibility.
-    #
-    # You may still use the Syck engine by installing
-    # the 'syck' gem and using the Syck constant.
-    def yamler= engine # :nodoc:
-      case engine
-      when 'syck' then warn "syck has been removed, psych is used instead"
-      when 'psych' then @yamler = 'psych'
-      else
-        raise(ArgumentError, "bad engine")
+      def initialize # :nodoc:
+        @yamler = 'psych'
       end
 
-      engine
+      def syck? # :nodoc:
+        false
+      end
+
     end
+
+    ENGINE = EngineManager.new # :nodoc:
   end
 
-  ENGINE = EngineManager.new # :nodoc:
+  YAML = Psych # :nodoc:
+
+rescue LoadError
+
+  begin
+    require 'syck'
+
+    module YAML
+
+      # For compatibility, deprecated
+      class EngineManager # :nodoc:
+        attr_reader :yamler # :nodoc:
+
+        def initialize # :nodoc:
+          @yamler = 'syck'
+        end
+
+        def syck? # :nodoc:
+          true
+        end
+
+      end
+
+      ENGINE = EngineManager.new # :nodoc:
+    end
+
+  rescue LoadError
+    warn "#{caller[0]}:"
+    warn "It seems your ruby installation is missing psych (for YAML output)."
+    warn "To eliminate this warning, please install libyaml and reinstall your ruby."
+    raise
+  end
 end
 
 # YAML Ain't Markup Language
@@ -86,4 +96,25 @@ end
 # For more advanced details on the implementation see Psych, and also check out
 # http://yaml.org for spec details and other helpful information.
 module YAML
+  # For compatibility, deprecated
+  class EngineManager # :nodoc:
+    # Psych is the default YAML implementation.
+    #
+    # This method is still present for compatibility.
+    #
+    # You may still use the Syck engine by installing
+    # the 'syck' gem and using the Syck constant.
+    def yamler= engine # :nodoc:
+      case engine
+      when 'syck'
+        @yamler = 'syck'
+      when 'psych'
+        @yamler = 'psych'
+      else
+        raise ArgumentError, "invalid YAML engine: #{engine}"
+      end
+
+      engine
+    end
+  end
 end
