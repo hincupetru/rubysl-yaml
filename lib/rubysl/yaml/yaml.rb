@@ -29,6 +29,8 @@ rescue LoadError
   begin
     require 'syck'
 
+    YAML = Syck
+
     module YAML
 
       # For compatibility, deprecated
