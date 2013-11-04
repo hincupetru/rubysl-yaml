@@ -142,7 +142,7 @@ rb_syck_compile(VALUE self, VALUE port)
     syck_free_parser( parser );
 
     bc = rb_str_new2( ret );
-    if ( taint )      OBJ_TAINT( bc );
+    if ( taint && !OBJ_FROZEN(bc) )      OBJ_TAINT( bc );
     return bc;
 }
 
@@ -658,7 +658,7 @@ rb_syck_load_handler(SyckParser *p, SyckNode *n)
         obj = n->id;
     }
 
-    if ( bonus->taint)      OBJ_TAINT( obj );
+    if ( bonus->taint && !OBJ_FROZEN(obj) )      OBJ_TAINT( obj );
     if ( bonus->proc != 0 ) rb_funcall(bonus->proc, s_call, 1, obj);
 
     rb_hash_aset(bonus->data, rb_hash_size(bonus->data), obj);
