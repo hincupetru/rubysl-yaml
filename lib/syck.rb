@@ -445,6 +445,13 @@ module Syck
         # nothing
       end
     end
+
+    #--
+    # For Rubinius, replaces 'rb_require("data")' because that is hard-coded
+    # to use Kernel.require, so RubyGems #require override isn't invoked.
+    def self.require_data
+      require "date"
+    end
 end
 
 module Kernel

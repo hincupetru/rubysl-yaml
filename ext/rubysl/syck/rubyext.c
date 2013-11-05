@@ -518,7 +518,7 @@ yaml_org_handler( SyckNode *n, VALUE *ref )
                     /*
                      * Load Date module
                      */
-                    rb_require( "date" );
+                    rb_funcall(rb_syck, rb_intern("require_date"), 0);
                     cDate = rb_const_get( rb_cObject, rb_intern("Date") );
                 }
 
