@@ -13,10 +13,17 @@
 #include <sys/types.h>
 #include <time.h>
 
+#ifndef RSTRING_PTR
+#define RSTRING_PTR(s) (RSTRING(s))
+#endif
+#ifndef RSTRING_LEN
+#define RSTRING_LEN(s) (RSTRING(s))
+#endif
+
 #ifdef HAVE_RB_STR_COPIED_PTR
 #define syck_copy_string(str) rb_str_copied_ptr(str)
 #else
-#define syck_copy_string(val) syck_strndup(RSTRING(val)->ptr, RSTRING_LEN(val))
+#define syck_copy_string(val) syck_strndup(RSTRING_PTR(val), RSTRING_LEN(val))
 #endif
 
 #ifdef HAVE_RB_STR_PTR_READONLY
